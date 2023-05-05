@@ -329,14 +329,37 @@ customers = [
   });
 
   app.post("/register", function(req, res) {
+    let maxIdCust=customers.reduce((acc, curr)=>curr.custId>acc?curr.custId:acc, 0);
     const cust = {
+      custId:maxIdCust+1,
       name: req.body.name,
       email: req.body.email,
       password: req.body.password,
       role: req.body.role,
     };
-
     customers.unshift(cust);
+
+    if(req.body.role='student'){
+      let maxIdSt=students.reduce((acc, curr)=>curr.id>acc?curr.id:acc, 0);
+      let student={
+        id: maxIdSt+1,
+        name: req.body.name,
+        dob: "",
+        gender: "",
+        about: "",
+        courses: []
+      }
+      students.unshift(student);
+    }
+    else if(req.body.role='faculty'){
+      let maxIdFa=faculties.reduce((acc, curr)=>curr.id>acc?curr.id:acc, 0);
+      let faculty={ 
+        id: maxIdFa+1, 
+        name: req.name, 
+        courses: [] 
+      }
+      faculties.unshift(faculty);
+    }
     var customerRes= {
       name: req.body.name,
       email:req.body.email,
@@ -431,11 +454,11 @@ customers = [
   })
 
   app.post('/postStudentDetails', (req, res)=>{
-    let maxid=students.reduce((acc, curr)=>curr.id>acc?curr.id:acc, 0);
-    let student=req.body;
-    student.id=maxid+1;
-    student.courses=[];
-    students.push(student);
+    // let maxid=students.reduce((acc, curr)=>curr.id>acc?curr.id:acc, 0);
+    let student=students.find(n=>n.name==req.body.name);
+    student.gender=req.body.gender;
+    student.dob=req.body.dob;
+    student.about=req.body.about;
     res.send(student);
   })
 
